@@ -92,14 +92,24 @@
     }
     return null;
   }
+  // Strip the tag down to a bare version ("android-v1.0.29" / "v1.0.29" -> "1.0.29").
+  function clean(tag) { return String(tag || "").replace(/^android-/, "").replace(/^v/, ""); }
+  // Point a button at its newest installer AND stamp that platform's version into
+  // its sub-label. Auto-updates every load — a new release changes it here with no edit.
+  function wire(id, hit, sub) {
+    if (!hit) return;
+    var el = document.getElementById(id);
+    el.href = hit.url;
+    var small = el.querySelector("small");
+    if (small) small.textContent = "Version " + clean(hit.tag) + sub;
+  }
   fetch(API).then(function (r) { return r.json(); }).then(function (rels) {
     if (!Array.isArray(rels)) return;
     var win = firstWith(rels, ".exe"), apk = firstWith(rels, ".apk"), mac = firstWith(rels, ".dmg");
-    if (win) { document.getElementById("win").href = win.url;
-      document.getElementById("ver").textContent = "Latest version: " + String(win.tag || "").replace(/^v/, ""); }
-    else { document.getElementById("ver").textContent = ""; }
-    if (apk) { document.getElementById("and").href = apk.url; }
-    if (mac) { document.getElementById("mac").href = mac.url; }
+    wire("win", win, " · .exe · auto-updates");
+    wire("mac", mac, " · Apple Silicon · .dmg");
+    wire("and", apk, " · Android APK");
+    document.getElementById("ver").textContent = win ? "Latest version: " + clean(win.tag) : "";
   }).catch(function () { document.getElementById("ver").textContent = ""; });
 </script>
 </body>
