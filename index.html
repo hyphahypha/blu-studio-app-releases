@@ -59,9 +59,9 @@
       <span class="lab">Download for Windows<small>.exe installer · auto-updates</small></span>
     </a>
 
-    <a id="mac" class="btn soon" href="https://blu-studio.pages.dev">
+    <a id="mac" class="btn" href="https://github.com/hyphahypha/blu-studio-app-releases/releases/latest">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3.05-.93-1.36-2.38-1.55-2.9-1.57-1.23-.13-2.4.72-3.02.72-.62 0-1.58-.7-2.6-.68-1.34.02-2.58.78-3.27 1.98-1.4 2.43-.36 6.02 1 8 .67.96 1.46 2.04 2.5 2 1-.04 1.38-.65 2.6-.65s1.56.65 2.62.63c1.08-.02 1.77-.98 2.43-1.95.77-1.12 1.08-2.2 1.1-2.26-.02-.01-2.1-.81-2.12-3.2zM14.6 6.9c.55-.67.92-1.6.82-2.53-.79.03-1.75.53-2.32 1.2-.51.58-.96 1.52-.84 2.42.88.07 1.79-.45 2.34-1.09z"/></svg>
-      <span class="lab">Mac — Apple-signed build coming<small>use the browser version today (button above)</small></span>
+      <span class="lab">Download for Mac<small>Apple-signed &amp; notarized · opens clean on any Mac</small></span>
     </a>
 
     <a id="and" class="btn" href="https://github.com/hyphahypha/blu-studio-app-releases/releases">
@@ -110,10 +110,9 @@
   }
   fetch(API).then(function (r) { return r.json(); }).then(function (rels) {
     if (!Array.isArray(rels)) return;
-    var win = firstWith(rels, ".exe"), apk = firstWith(rels, ".apk");
+    var win = firstWith(rels, ".exe"), apk = firstWith(rels, ".apk"), mac = firstWith(rels, ".dmg");
     wire("win", win, " · .exe · auto-updates");
-    // Mac button intentionally NOT wired to the .dmg: unsigned builds trip macOS's
-    // "damaged" Gatekeeper block. Re-wire once the Apple-signed build is published.
+    wire("mac", mac, " · Apple-signed · opens clean");
     wire("and", apk, " · Android APK");
     document.getElementById("ver").textContent = win ? "Latest version: " + clean(win.tag) : "";
   }).catch(function () { document.getElementById("ver").textContent = ""; });
