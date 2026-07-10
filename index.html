@@ -97,6 +97,20 @@
     }
     return null;
   }
+  // Mac now ships as a notarized .zip (no .dmg — hdiutil is blocked by macOS App
+  // Management). Prefer the Intel build: it runs natively on Intel AND on Apple
+  // Silicon via Rosetta, so ONE download works on every Mac. (Native arm64 build
+  // is under "All versions".) Skips the OTA web-bundle "bundle.zip".
+  function firstMac(rels) {
+    for (var i = 0; i < rels.length; i++) {
+      var as = rels[i].assets || [];
+      var intel = as.filter(function (x) { return /-mac\.zip$/i.test(x.name) && !/arm64/i.test(x.name); })[0];
+      var arm = as.filter(function (x) { return /arm64-mac\.zip$/i.test(x.name); })[0];
+      var a = intel || arm;
+      if (a) return { url: a.browser_download_url, tag: rels[i].tag_name };
+    }
+    return null;
+  }
   // Strip the tag down to a bare version ("android-v1.0.29" / "v1.0.29" -> "1.0.29").
   function clean(tag) { return String(tag || "").replace(/^android-/, "").replace(/^v/, ""); }
   // Point a button at its newest installer AND stamp that platform's version into
@@ -110,7 +124,7 @@
   }
   fetch(API).then(function (r) { return r.json(); }).then(function (rels) {
     if (!Array.isArray(rels)) return;
-    var win = firstWith(rels, ".exe"), apk = firstWith(rels, ".apk"), mac = firstWith(rels, ".dmg");
+    var win = firstWith(rels, ".exe"), apk = firstWith(rels, ".apk"), mac = firstMac(rels);
     wire("win", win, " · .exe · auto-updates");
     wire("mac", mac, " · Apple-signed · opens clean");
     wire("and", apk, " · Android APK");
