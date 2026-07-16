@@ -64,7 +64,7 @@
       <span class="lab">Download for Mac<small>Apple-signed &amp; notarized · opens clean on any Mac</small></span>
     </a>
 
-    <a id="and" class="btn" href="https://github.com/hyphahypha/blu-studio-app-releases/releases">
+    <a id="and" class="btn" href="https://github.com/hyphahypha/blu-studio-app-releases/releases/download/android-v1.0.44/Blu-Studio-android-v1.0.44.apk">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14v9a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z"/><path d="m7 8 1.5-3M17 8l-1.5-3"/><path d="M9 4.5 8 3M15 4.5 16 3"/><circle cx="9.5" cy="12" r=".4" fill="currentColor"/><circle cx="14.5" cy="12" r=".4" fill="currentColor"/></svg>
       <span class="lab">Android (APK)<small>download &amp; open to install</small></span>
     </a>
@@ -89,7 +89,11 @@
 <script>
   // Point each button at the NEWEST installer via the GitHub API, so this page never
   // needs editing — a new release automatically becomes the download here.
-  var API = "https://api.github.com/repos/hyphahypha/blu-studio-app-releases/releases?per_page=30";
+  // per_page=100: the APK release (android-v*) is only cut for NATIVE changes, so it
+  // gets buried under fast-shipping desktop (v*) + OTA (ota-v*) releases — 30 wasn't
+  // enough to reach it, which broke the Android button. 100 always reaches it; and the
+  // <a id="and"> href above is hardcoded to the current APK as a JS-off/API-fail fallback.
+  var API = "https://api.github.com/repos/hyphahypha/blu-studio-app-releases/releases?per_page=100";
   function firstWith(rels, ext) {
     for (var i = 0; i < rels.length; i++) {
       var a = (rels[i].assets || []).filter(function (x) { return x.name.toLowerCase().indexOf(ext) === x.name.length - ext.length; })[0];
